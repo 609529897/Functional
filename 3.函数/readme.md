@@ -114,7 +114,7 @@ bmiTell weight height
 
 where 中定义的内容不可以在其他模式中访问
 
-> 下面代码会报错: 1. 是因为在模式匹配中使用了？ 2. 是因为只能在最底部使用？
+# ??? where 好像在模式匹配的时候，只能用在最下面的选项，而用在哨位时可以在任意选项使用变量
 
 ```haskell
 greet :: String -> String
@@ -150,3 +150,86 @@ calcBmis xs = [bmi w h | (w, h) <- xs]
 
 ## let
 
+可以在函数体的任意位置定义变量
+
+```haskell
+cylinder :: Double -> Double -> Double
+cylinder r h =
+    let sideArea = 2 * pi * r * h
+        topArea = pi * r ^ 2
+    in sideArea + 2 * topArea
+```
+
+let 可以放到代码的任意位置
+
+```haskell
+4 * （let a = 9 in a + 1）+ 2
+```
+
+在局部作用域定义函数
+
+```haskell
+[let square x = x * x in (square 5, square 3, square 2)]
+````
+
+同时绑定多个变量
+
+```haskell
+[let a = 100; b = 200; c = 300 in a * b * c]
+```
+
+模式匹配
+
+```haskell
+(let (a, b, c) = (1, 2, 3) in a + b + c) * 100
+```
+
+### 列表推导式中的 let
+
+```haskell
+calcBmis :: [(Double, Double)] -> [Double]
+calcBmis xs = [bmi | (w, h) <- xs, let bmi = w / h ^ 2, bmi > 25.0]
+-- (w, h) <- xs 被称为生成器，在这个题目里在生成器中不可使用 bmi 因为它在 let 定义的前面
+```
+
+### GHCI 中的 let
+
+在 GHCI 中定义函数和常量时，可以忽略 in 这样在一个会话的中的随处可以使用定义的语句
+
+```haskell
+let zoot x y z = x * y * z
+```
+
+## case 表达式
+
+类似模式匹配，其实模式匹配就是 case 表达式的语法糖
+
+
+```haskell
+-- 表达式结构
+
+case expression of pattern -> result
+                   pattern -> result
+                   pattern -> result
+
+head' :: [a] -> a
+head' xs = case xs of [] -> "error"
+                      (x:_) -> x
+```
+
+模式匹配只能在函数定义时使用，而 case 可以在函数体任意地方使用
+
+```haskell
+describeList :: [a] -> String
+describeList ls = "The list is" ++ case ls of [] -> "empty"
+                                              [x] -> "1"
+                                              xs -> "2"
+```
+
+```haskell
+describeList :: [a] -> String
+describeList ls = "The list is" ++ what ls
+    where what [] = "empty"
+          what [x] = "a singleton list"
+          what xs = "a longer list"
+```
