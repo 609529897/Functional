@@ -157,5 +157,36 @@ Map.lookup "a" phoneBook     -- 获取 "1"
 Map.insert "c" "3" phoneBook -- 插入
 Map.size phoneBook           -- 检查大小
 ```
+## 构造自己的模块
 
+```haskell
+-- 定义模块，并导出部分模块
+module Geometry 
+(
+  sphereVolume,
+) where
 
+import Geometry -- 导入模块
+````
+
+> 使用 Geometry 的其他模块必须与 Geometry 在同一目录下
+
+### 模块分层
+
+有个叫 Some 的文件夹，文件夹下有三个文件分别叫
+
+```haskell
+module Some.a ( x, y ) where
+```
+
+```haskell
+module Some.b ( n, m ) where
+```
+
+使用时
+
+```haskell
+import Some.a (x)
+import Some.b hiding (m)
+import qualified Some.a as A
+```
