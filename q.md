@@ -17,3 +17,4 @@ oddSquareSum = sum . takeWhile (<10000) . filter odd $ map (^2) [1..]
 oddSquareSum = sum . takeWhile (<10000) . filter odd $ map (^2) $ [1..] -- 需要 $ 吗？
 ```
 
+## 代数类型类型 和 ADT

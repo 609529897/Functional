@@ -110,3 +110,10 @@ data day = Monday | Tuesday | Wednesday
 ```
 
 ## 类型别名
+
+```haskell
+type String = [Char]
+type AssocList k v = [(k, v)] -- 带参数
+type IntMap v = Map Int v
+type IntMap = Map Int -- 部分调用
+```
