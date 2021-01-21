@@ -117,3 +117,97 @@ type AssocList k v = [(k, v)] -- 带参数
 type IntMap v = Map Int v
 type IntMap = Map Int -- 部分调用
 ```
+
+## 递归数据结构
+
+固定性声明
+
+当我们将一个函数指定为运算符时，可以使用固定性规则给它赋予优先级和左右结合规范
+
+`infixr 5 :-:` 冒号表示是一个中缀函数，infixr 表示右结合 5 表示优先级。infixl 表示左结合
+
+构建二叉搜索树
+
+```haskell
+singleton :: a -> Tree a
+singleton x = Node x EmptyTree EmptyTree
+
+treeInsert :: (Ord a) => a -> Tree a -> Tree a
+treeInsert x EmptyTree = singleton x
+treeInsert x (Node a left right)
+    | x == a = Node x left right
+    | x < a = Node a (treeInsert x left) right
+    | x > a = Node a left (treeInsert x right)
+
+
+treeElem :: (Ord a) => a -> Tree a -> Bool
+treeElem x EmptyTree = False
+treeElem x (Node a left right)
+    | x == a = True
+    | x < a = treeElem x left
+    | x > a = treeElem x right
+```
+
+## 类型类
+
+定义
+
+```haskell
+class Eq a where
+  (==) :: a -> a -> Bool
+  (/=) :: a -> a -> Bool
+  x == y = not (x /= y)
+  x /= y = not (x == y)
+```
+
+类型变为某个类型类的实例
+
+```haskell
+data TrafficLight = Red | Yellow | Green
+
+instance Eq TrafficLight where
+  Red == Red = True
+  Green == Green = True
+  Yellow == Yellow = True
+  _ == _ = False
+```
+
+**最小完备定义**: 为符合类型类的行为，而必须实现的最少数几个函数。比如上面的只用匹配 `==` 即可，不用在去管 `/=` 的情况
+
+子类化
+
+```haskell
+class (Eq a) => Num a where
+```
+
+带参子类型子类化
+
+```haskell
+instance (Eq m) => Eq (Maybe m) where
+  Just x == Just y = x == y
+  Nothing == Nothing = True
+  _ == _ = False
+```
+
+## Yes-No 类型
+
+```haskell
+class YesNo a where
+  yesno :: a -> Bool
+
+instance YesNo Int where
+  yesno 0 = False
+  yesno _ = True
+
+instance YesNo [a] where
+  yesno [] = False
+  yesno _ = True
+```
+
+```haskell
+yesnoIf :: (YesNo y) => y -> a -> a -> a
+yesnoIf yesnoVal yesResult noResult =
+  if yesno yesnoVal
+    then yesResult
+    else noResult 
+```
