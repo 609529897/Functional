@@ -40,3 +40,5 @@ treeElem x (Node a left right)
 ```
 
 ## 值构造器和类型构造器?
+
+## Functor

@@ -209,5 +209,47 @@ yesnoIf :: (YesNo y) => y -> a -> a -> a
 yesnoIf yesnoVal yesResult noResult =
   if yesno yesnoVal
     then yesResult
-    else noResult 
+    else noResult
+```
+
+## Functor 类型类
+
+用来表示可以映射的事务
+
+```haskell
+class Functor f where -- f 取单个参数的类型构造器
+  fmap :: (a -> b) -> f a -> f b
+```
+
+### Maybe 函子
+
+```haskell
+instance Functor Maybe where
+  fmap f (Just x) = Just (f x)
+  fmap f Nothing = Nothing
+```
+
+### 树函子
+
+```haskell
+instance Function Tree where
+  fmap f EmptyTree = EmptyTree
+  fmap f (Node x left right) = Node (f x) (fmap f left) (fmap f right)
+```
+
+### Either a 函子
+
+```haskell
+instance Functor (Either a) where
+  fmap f (Right x) -> Right (f x)
+  fmap f (Left x) -> left x
+```
+
+## kind 与无名类型
+
+打算应用到 Functort 的类型的 kind 必须为 `* -> *`
+
+```haskell
+:k Int
+Int :: *
 ```
