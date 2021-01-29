@@ -76,3 +76,24 @@ main = do
   appendFile "todo.txt" (todoItem ++ "\n")
 ```
 
+## 随机数
+
+```haskell
+random :: (RandomGen g, RandomGen a) => g -> (a, g)
+random (mkStdGen 949488) :: (Integer, StdGen)
+-- 949488 不变的话，随机数不变
+```
+## 字节串
+
+- 类型: `ByteString`
+
+- 严格的和惰性字节串
+
+- 一个严格的字节串代表数组的一系列字节
+
+- 惰性的字节串是存储在一些块里，每一块差不多 64kb，读取文件时可以按块读取
+
+- 当需要进行高性能的 文件读写，命令行 的 IO 操作时可以使用字节串
+
+
+
