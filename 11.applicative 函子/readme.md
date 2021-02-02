@@ -59,3 +59,55 @@ fmap (f . g) = fmap f . fmap g
 fmap (f . g) x = fmap f $ fmap g x
 ```
 
+## 使用 applicative 函子
+
+```haskell
+class (Functor f) => Applicative f where
+    pure :: a -> f b
+    (<*>) :: f (a -> b) -> f a -> f b
+```
+
+Maybe Applicative
+
+```haskell
+instance Applicative Maybe where
+    pure = Just
+    Nothing <*> _ = Nothing
+    (Just f) <*> something = fmap f something
+```
+
+```haskell
+-- <$> fmap 的中缀形式
+（<$>） :: (Functor f) => (a -> b) -> f a -> f b
+f <$> x = fmap f x
+```
+
+一些 applicative 实例
+
+- 列表
+
+```haskell
+instance Applicative [] where
+    pure x = [x]
+    fs <*> xs = [f x | f <- fs, x <- xs]
+```
+
+- IO applicative 函子
+
+```haskell
+instance Applicative IO where
+    pure = return
+    a <*> b = do
+        f <- a
+        x <- b
+        return (f x)
+```
+
+- 函数作为 applicative
+
+```haskell
+instance Applicative ((->) r) where
+    pure x = (\_ -> x)
+    f <*> g = \x -> f x (g x)
+```
+
