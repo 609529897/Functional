@@ -63,7 +63,7 @@ fmap (f . g) x = fmap f $ fmap g x
 
 ```haskell
 class (Functor f) => Applicative f where
-    pure :: a -> f b
+    pure :: a -> f b -- pure 接受的是最小上下文
     (<*>) :: f (a -> b) -> f a -> f b
 ```
 
@@ -111,3 +111,42 @@ instance Applicative ((->) r) where
     f <*> g = \x -> f x (g x)
 ```
 
+- zip 列表
+
+```haskell
+instance Applicative ZipList where
+  pure x = ZipList (repeat x)
+  ZipList fs <*> ZipList xs = ZipList (zipWith (\f x -> f x) fs xs)
+```
+
+## Applicative 定律
+
+- `pure f <*> x = fmap f x`
+
+- `pure id <*> v = v`
+
+- `pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
+
+- `pure f <*> pure x = pure (f x)`
+
+- `u <*> pure y = pure ($ y) <*> u`
+
+## Applicative 实用函数
+
+```haskell
+liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c
+liftA2 f a b = f <$> a <*> b
+```
+
+接受 Applicative 值的列表，返回以列表为结果的 Applicative 值
+
+```haskell
+sequenceA :: (Applicative f) => [f a] -> f [a]
+sequenceA [] = pure []
+sequenceA (x:xs) = (:) <$> x <*> sequenceA xs
+```
+
+```haskell
+sequenceA :: (Applicative f) => [f a] -> f [a]
+sequenceA = foldr (liftA2 (:)) (pure [])
+```
